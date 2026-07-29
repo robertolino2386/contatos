@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#0f172a" />
+  <title>Controle de Contatos</title>
+
+  <style>
+    :root {
+      --fundo: #f1f5f9;
+      --card: #ffffff;
+      --primaria: #2563eb;
+      --primaria-escura: #1d4ed8;
+      --texto: #0f172a;
+      --texto-suave: #64748b;
+      --borda: #e2e8f0;
+      --perigo: #dc2626;
+      --sucesso: #16a34a;
+      --sombra: 0 12px 32px rgba(15, 23, 42, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Inter, Arial, Helvetica, sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at top right, rgba(37, 99, 235, 0.12), transparent 32%),
+        var(--fundo);
+      color: var(--texto);
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+      border: none;
+    }
+
+    .app {
+      width: min(100%, 760px);
+      margin: 0 auto;
+      padding: 18px 14px 40px;
+    }
+
+    .topo {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+
+    .marca {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .icone-marca {
+      width: 48px;
+      height: 48px;
+      border-radius: 15px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, var(--primaria), #60a5fa);
+      color: white;
+      font-size: 23px;
+      box-shadow: 0 10px 24px rgba(37, 99, 235, 0.25);
+    }
+
+    h1 {
+      font-size: clamp(22px, 5vw, 30px);
+      line-height: 1.05;
+    }
+
+    .subtitulo {
+      margin-top: 4px;
+      font-size: 13px;
+      color: var(--texto-suave);
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--borda);
+      border-radius: 20px;
+      box-shadow: var(--sombra);
+    }
+
+    .formulario-card {
+      padding: 18px;
+      margin-bottom: 16px;
+    }
+
+    .titulo-card {
+      font-size: 17px;
+      font-weight: 800;
+      margin-bottom: 15px;
+    }
+
+    .grid-form {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 13px;
+    }
+
+    .campo label {
+      display: block;
+      margin-bottom: 7px;
+      font-size: 13px;
+      font-weight: 700;
+      color: #334155;
+    }
+
+    .campo input {
+      width: 100%;
+      min-height: 49px;
+      padding: 0 14px;
+      border: 1px solid var(--borda);
+      border-radius: 13px;
+      background: #f8fafc;
+      color: var(--texto);
+      outline: none;
+      transition: 0.2s ease;
+    }
+
+    .campo input:focus {
+      border-color: var(--primaria);
+      background: #fff;
+      box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+    }
+
+    .acoes-form {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+      margin-top: 15px;
+    }
+
+    .btn {
+      min-height: 48px;
+      border-radius: 13px;
+      padding: 0 16px;
+      font-weight: 800;
+      transition: 0.2s ease;
+    }
+
+    .btn:active {
+      transform: scale(0.98);
+    }
+
+    .btn-primario {
+      background: var(--primaria);
+      color: white;
+    }
+
+    .btn-primario:hover {
+      background: var(--primaria-escura);
+    }
+
+    .btn-secundario {
+      background: #e2e8f0;
+      color: #334155;
+    }
+
+    .oculto {
+      display: none !important;
+    }
+
+    .lista-card {
+      padding: 16px;
+    }
+
+    .cabecalho-lista {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .titulo-lista {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .contador {
+      min-width: 32px;
+      height: 28px;
+      padding: 0 9px;
+      border-radius: 999px;
+      display: grid;
+      place-items: center;
+      background: #dbeafe;
+      color: var(--primaria-escura);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .busca {
+      position: relative;
+    }
+
+    .busca input {
+      width: 100%;
+      min-height: 46px;
+      padding: 0 14px 0 43px;
+      border: 1px solid var(--borda);
+      border-radius: 13px;
+      outline: none;
+      background: #f8fafc;
+    }
+
+    .busca input:focus {
+      border-color: var(--primaria);
+      box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+    }
+
+    .busca span {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--texto-suave);
+    }
+
+    .lista-contatos {
+      display: grid;
+      gap: 11px;
+    }
+
+    .contato {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 13px;
+      border: 1px solid var(--borda);
+      border-radius: 16px;
+      background: #fff;
+    }
+
+    .avatar {
+      flex: 0 0 auto;
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+      color: var(--primaria-escura);
+      font-weight: 900;
+      font-size: 17px;
+    }
+
+    .dados {
+      min-width: 0;
+      flex: 1;
+    }
+
+    .nome {
+      font-size: 15px;
+      font-weight: 800;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .telefone {
+      display: inline-block;
+      margin-top: 4px;
+      font-size: 13px;
+      color: var(--texto-suave);
+      text-decoration: none;
+    }
+
+    .telefone:hover {
+      color: var(--primaria);
+    }
+
+    .acoes-contato {
+      display: flex;
+      gap: 7px;
+      flex: 0 0 auto;
+    }
+
+    .btn-icone {
+      width: 39px;
+      height: 39px;
+      border-radius: 11px;
+      display: grid;
+      place-items: center;
+      font-size: 17px;
+    }
+
+    .editar {
+      background: #dbeafe;
+      color: #1d4ed8;
+    }
+
+    .excluir {
+      background: #fee2e2;
+      color: var(--perigo);
+    }
+
+    .vazio,
+    .carregando {
+      padding: 32px 16px;
+      text-align: center;
+      color: var(--texto-suave);
+    }
+
+    .vazio-icone {
+      font-size: 40px;
+      margin-bottom: 10px;
+    }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 22px;
+      transform: translateX(-50%) translateY(120px);
+      width: calc(100% - 28px);
+      max-width: 520px;
+      padding: 14px 16px;
+      border-radius: 14px;
+      color: #fff;
+      font-weight: 700;
+      text-align: center;
+      box-shadow: 0 15px 40px rgba(15, 23, 42, 0.25);
+      opacity: 0;
+      transition: 0.3s ease;
+      z-index: 1000;
+    }
+
+    .toast.mostrar {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .toast.sucesso {
+      background: var(--sucesso);
+    }
+
+    .toast.erro {
+      background: var(--perigo);
+    }
+
+    .modal-fundo {
+      position: fixed;
+      inset: 0;
+      padding: 18px;
+      display: grid;
+      place-items: center;
+      background: rgba(15, 23, 42, 0.55);
+      backdrop-filter: blur(4px);
+      z-index: 900;
+    }
+
+    .modal {
+      width: min(100%, 410px);
+      padding: 20px;
+      border-radius: 18px;
+      background: white;
+      box-shadow: 0 24px 70px rgba(15, 23, 42, 0.35);
+    }
+
+    .modal h3 {
+      margin-bottom: 9px;
+    }
+
+    .modal p {
+      color: var(--texto-suave);
+      line-height: 1.5;
+      margin-bottom: 18px;
+    }
+
+    .modal-acoes {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .btn-perigo {
+      background: var(--perigo);
+      color: white;
+    }
+
+    .rodape {
+      padding-top: 18px;
+      text-align: center;
+      font-size: 12px;
+      color: var(--texto-suave);
+    }
+
+    @media (min-width: 600px) {
+      .app {
+        padding: 28px 20px 50px;
+      }
+
+      .grid-form {
+        grid-template-columns: 1fr 0.75fr;
+      }
+
+      .acoes-form {
+        grid-template-columns: 1fr auto;
+      }
+
+      .cabecalho-lista {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .busca {
+        width: 280px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="app">
+    <header class="topo">
+      <div class="marca">
+        <div class="icone-marca">☎</div>
+        <div>
+          <h1>Meus Contatos</h1>
+          <p class="subtitulo">Cadastre e gerencie seus contatos</p>
+        </div>
+      </div>
+    </header>
+
+    <section class="card formulario-card">
+      <h2 class="titulo-card" id="tituloFormulario">Novo contato</h2>
+
+      <form id="formContato">
+        <input type="hidden" id="idContato" />
+
+        <div class="grid-form">
+          <div class="campo">
+            <label for="nome">Nome</label>
+            <input
+              id="nome"
+              type="text"
+              placeholder="Digite o nome"
+              autocomplete="name"
+              maxlength="100"
+              required
+            />
+          </div>
+
+          <div class="campo">
+            <label for="telefone">Telefone</label>
+            <input
+              id="telefone"
+              type="tel"
+              placeholder="(11) 99999-9999"
+              autocomplete="tel"
+              inputmode="tel"
+              maxlength="20"
+              required
+            />
+          </div>
+        </div>
+
+        <div class="acoes-form">
+          <button class="btn btn-primario" type="submit" id="btnSalvar">
+            Salvar contato
+          </button>
+
+          <button class="btn btn-secundario oculto" type="button" id="btnCancelar">
+            Cancelar edição
+          </button>
+        </div>
+      </form>
+    </section>
+
+    <section class="card lista-card">
+      <div class="cabecalho-lista">
+        <div class="titulo-lista">
+          <h2 class="titulo-card" style="margin-bottom:0;">Contatos cadastrados</h2>
+          <span class="contador" id="contador">0</span>
+        </div>
+
+        <div class="busca">
+          <span>⌕</span>
+          <input id="campoBusca" type="search" placeholder="Buscar contato..." />
+        </div>
+      </div>
+
+      <div id="listaContatos" class="lista-contatos">
+        <div class="carregando">Carregando contatos...</div>
+      </div>
+    </section>
+
+    <p class="rodape">Controle de Contatos</p>
+  </main>
+
+  <div class="modal-fundo oculto" id="modalExcluir">
+    <div class="modal">
+      <h3>Excluir contato?</h3>
+      <p id="textoExclusao">Esta ação não poderá ser desfeita.</p>
+
+      <div class="modal-acoes">
+        <button class="btn btn-secundario" type="button" id="btnFecharModal">
+          Cancelar
+        </button>
+        <button class="btn btn-perigo" type="button" id="btnConfirmarExclusao">
+          Excluir
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    /*
+      Cole abaixo a URL publicada do seu Google Apps Script.
+
+      O Apps Script deverá aceitar requisições POST no formato:
+      { action: "listar" }
+      { action: "salvar", id: "", nome: "", telefone: "" }
+      { action: "excluir", id: "" }
+
+      Retorno esperado:
+      { success: true, data: [...] }
+    */
+    const API_URL = "https://script.google.com/macros/s/AKfycbyI0xEx-_GfprPhixOQRSkD_17w9N7gvQpmVCVA24n-phedpXTkESZGbuiNHaiwX8DddA/exec";
+
+    let contatos = [];
+    let contatoParaExcluir = null;
+
+    const formContato = document.getElementById("formContato");
+    const idContato = document.getElementById("idContato");
+    const nome = document.getElementById("nome");
+    const telefone = document.getElementById("telefone");
+    const btnSalvar = document.getElementById("btnSalvar");
+    const btnCancelar = document.getElementById("btnCancelar");
+    const tituloFormulario = document.getElementById("tituloFormulario");
+    const listaContatos = document.getElementById("listaContatos");
+    const contador = document.getElementById("contador");
+    const campoBusca = document.getElementById("campoBusca");
+    const modalExcluir = document.getElementById("modalExcluir");
+    const textoExclusao = document.getElementById("textoExclusao");
+    const btnFecharModal = document.getElementById("btnFecharModal");
+    const btnConfirmarExclusao = document.getElementById("btnConfirmarExclusao");
+    const toast = document.getElementById("toast");
+
+    document.addEventListener("DOMContentLoaded", carregarContatos);
+    formContato.addEventListener("submit", salvarContato);
+    btnCancelar.addEventListener("click", limparFormulario);
+    campoBusca.addEventListener("input", filtrarContatos);
+    btnFecharModal.addEventListener("click", fecharModalExclusao);
+    btnConfirmarExclusao.addEventListener("click", confirmarExclusao);
+
+    telefone.addEventListener("input", () => {
+      telefone.value = formatarTelefone(telefone.value);
+    });
+
+    async function requisicao(dados) {
+      if (!API_URL || API_URL.includes("COLE_AQUI")) {
+        throw new Error("Configure a URL do Google Apps Script no arquivo index.html.");
+      }
+
+      const resposta = await fetch(API_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "text/plain;charset=utf-8"
+        },
+        body: JSON.stringify(dados)
+      });
+
+      if (!resposta.ok) {
+        throw new Error("Não foi possível acessar o servidor.");
+      }
+
+      const resultado = await resposta.json();
+
+      if (!resultado.success) {
+        throw new Error(resultado.message || "Ocorreu um erro na operação.");
+      }
+
+      return resultado;
+    }
+
+    async function carregarContatos() {
+      listaContatos.innerHTML = '<div class="carregando">Carregando contatos...</div>';
+
+      try {
+        const resultado = await requisicao({ action: "listar" });
+        contatos = Array.isArray(resultado.data) ? resultado.data : [];
+        contatos.sort((a, b) =>
+          String(a.nome || "").localeCompare(String(b.nome || ""), "pt-BR")
+        );
+        renderizarContatos(contatos);
+      } catch (erro) {
+        listaContatos.innerHTML = `
+          <div class="vazio">
+            <div class="vazio-icone">⚠</div>
+            <strong>Não foi possível carregar</strong>
+            <p style="margin-top:6px;">${escaparHtml(erro.message)}</p>
+          </div>
+        `;
+        contador.textContent = "0";
+      }
+    }
+
+    async function salvarContato(evento) {
+      evento.preventDefault();
+
+      const nomeInformado = nome.value.trim();
+      const telefoneInformado = telefone.value.trim();
+
+      if (!nomeInformado || !telefoneInformado) {
+        mostrarToast("Preencha o nome e o telefone.", "erro");
+        return;
+      }
+
+      alterarEstadoBotao(true);
+
+      try {
+        await requisicao({
+          action: "salvar",
+          id: idContato.value || "",
+          nome: nomeInformado,
+          telefone: telefoneInformado
+        });
+
+        mostrarToast(
+          idContato.value ? "Contato atualizado com sucesso." : "Contato salvo com sucesso.",
+          "sucesso"
+        );
+
+        limparFormulario();
+        await carregarContatos();
+      } catch (erro) {
+        mostrarToast(erro.message, "erro");
+      } finally {
+        alterarEstadoBotao(false);
+      }
+    }
+
+    function editarContato(id) {
+      const contato = contatos.find(item => String(item.id) === String(id));
+
+      if (!contato) return;
+
+      idContato.value = contato.id;
+      nome.value = contato.nome || "";
+      telefone.value = contato.telefone || "";
+
+      tituloFormulario.textContent = "Editar contato";
+      btnSalvar.textContent = "Salvar alterações";
+      btnCancelar.classList.remove("oculto");
+
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      setTimeout(() => nome.focus(), 350);
+    }
+
+    function abrirModalExclusao(id) {
+      const contato = contatos.find(item => String(item.id) === String(id));
+
+      if (!contato) return;
+
+      contatoParaExcluir = contato;
+      textoExclusao.textContent =
+        `Deseja realmente excluir o contato de ${contato.nome}?`;
+
+      modalExcluir.classList.remove("oculto");
+    }
+
+    function fecharModalExclusao() {
+      contatoParaExcluir = null;
+      modalExcluir.classList.add("oculto");
+    }
+
+    async function confirmarExclusao() {
+      if (!contatoParaExcluir) return;
+
+      btnConfirmarExclusao.disabled = true;
+      btnConfirmarExclusao.textContent = "Excluindo...";
+
+      try {
+        await requisicao({
+          action: "excluir",
+          id: contatoParaExcluir.id
+        });
+
+        mostrarToast("Contato excluído com sucesso.", "sucesso");
+        fecharModalExclusao();
+        await carregarContatos();
+      } catch (erro) {
+        mostrarToast(erro.message, "erro");
+      } finally {
+        btnConfirmarExclusao.disabled = false;
+        btnConfirmarExclusao.textContent = "Excluir";
+      }
+    }
+
+    function filtrarContatos() {
+      const termo = campoBusca.value.trim().toLowerCase();
+
+      if (!termo) {
+        renderizarContatos(contatos);
+        return;
+      }
+
+      const filtrados = contatos.filter(contato => {
+        const nomeContato = String(contato.nome || "").toLowerCase();
+        const telefoneContato = String(contato.telefone || "").toLowerCase();
+
+        return nomeContato.includes(termo) || telefoneContato.includes(termo);
+      });
+
+      renderizarContatos(filtrados);
+    }
+
+    function renderizarContatos(lista) {
+      contador.textContent = lista.length;
+
+      if (!lista.length) {
+        listaContatos.innerHTML = `
+          <div class="vazio">
+            <div class="vazio-icone">☏</div>
+            <strong>Nenhum contato encontrado</strong>
+            <p style="margin-top:6px;">Cadastre um novo contato acima.</p>
+          </div>
+        `;
+        return;
+      }
+
+      listaContatos.innerHTML = lista.map(contato => {
+        const id = escaparAtributo(contato.id);
+        const nomeSeguro = escaparHtml(contato.nome || "");
+        const telefoneSeguro = escaparHtml(contato.telefone || "");
+        const telefoneLink = somenteNumeros(contato.telefone || "");
+        const iniciais = obterIniciais(contato.nome || "");
+
+        return `
+          <article class="contato">
+            <div class="avatar">${escaparHtml(iniciais)}</div>
+
+            <div class="dados">
+              <div class="nome">${nomeSeguro}</div>
+              <a class="telefone" href="tel:${telefoneLink}">
+                ${telefoneSeguro}
+              </a>
+            </div>
+
+            <div class="acoes-contato">
+              <button
+                class="btn-icone editar"
+                type="button"
+                aria-label="Editar ${nomeSeguro}"
+                onclick="editarContato('${id}')"
+                title="Editar"
+              >✎</button>
+
+              <button
+                class="btn-icone excluir"
+                type="button"
+                aria-label="Excluir ${nomeSeguro}"
+                onclick="abrirModalExclusao('${id}')"
+                title="Excluir"
+              >🗑</button>
+            </div>
+          </article>
+        `;
+      }).join("");
+    }
+
+    function limparFormulario() {
+      formContato.reset();
+      idContato.value = "";
+      tituloFormulario.textContent = "Novo contato";
+      btnSalvar.textContent = "Salvar contato";
+      btnCancelar.classList.add("oculto");
+    }
+
+    function alterarEstadoBotao(carregando) {
+      btnSalvar.disabled = carregando;
+      btnSalvar.textContent = carregando
+        ? "Salvando..."
+        : idContato.value
+          ? "Salvar alterações"
+          : "Salvar contato";
+    }
+
+    function mostrarToast(mensagem, tipo) {
+      toast.textContent = mensagem;
+      toast.className = `toast ${tipo} mostrar`;
+
+      clearTimeout(window.toastTimer);
+
+      window.toastTimer = setTimeout(() => {
+        toast.classList.remove("mostrar");
+      }, 3200);
+    }
+
+    function formatarTelefone(valor) {
+      const numeros = valor.replace(/\D/g, "").slice(0, 11);
+
+      if (numeros.length <= 2) {
+        return numeros;
+      }
+
+      if (numeros.length <= 6) {
+        return `(${numeros.slice(0, 2)}) ${numeros.slice(2)}`;
+      }
+
+      if (numeros.length <= 10) {
+        return `(${numeros.slice(0, 2)}) ${numeros.slice(2, 6)}-${numeros.slice(6)}`;
+      }
+
+      return `(${numeros.slice(0, 2)}) ${numeros.slice(2, 7)}-${numeros.slice(7)}`;
+    }
+
+    function obterIniciais(nomeCompleto) {
+      const partes = nomeCompleto
+        .trim()
+        .split(/\s+/)
+        .filter(Boolean);
+
+      if (!partes.length) return "?";
+      if (partes.length === 1) return partes[0].slice(0, 2).toUpperCase();
+
+      return `${partes[0][0]}${partes[partes.length - 1][0]}`.toUpperCase();
+    }
+
+    function somenteNumeros(valor) {
+      return String(valor).replace(/\D/g, "");
+    }
+
+    function escaparHtml(valor) {
+      return String(valor)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function escaparAtributo(valor) {
+      return escaparHtml(String(valor)).replaceAll("`", "&#096;");
+    }
+  </script>
+</body>
+</html>
