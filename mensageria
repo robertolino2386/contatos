@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#111827" />
+  <title>Mensageria</title>
+
+  <style>
+    :root {
+      --fundo: #f3f4f6;
+      --card: #ffffff;
+      --primaria: #7c3aed;
+      --primaria-escura: #6d28d9;
+      --texto: #111827;
+      --texto-suave: #6b7280;
+      --borda: #e5e7eb;
+      --perigo: #dc2626;
+      --sucesso: #16a34a;
+      --sombra: 0 14px 35px rgba(17, 24, 39, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Inter, Arial, Helvetica, sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at top right, rgba(124, 58, 237, 0.12), transparent 34%),
+        var(--fundo);
+      color: var(--texto);
+    }
+
+    button,
+    input,
+    textarea {
+      font: inherit;
+    }
+
+    button {
+      border: none;
+      cursor: pointer;
+    }
+
+    .app {
+      width: min(100%, 760px);
+      margin: 0 auto;
+      padding: 18px 14px 40px;
+    }
+
+    .topo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .icone-marca {
+      width: 50px;
+      height: 50px;
+      border-radius: 16px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, var(--primaria), #a78bfa);
+      color: white;
+      font-size: 24px;
+      box-shadow: 0 12px 25px rgba(124, 58, 237, 0.24);
+    }
+
+    h1 {
+      font-size: clamp(23px, 5vw, 31px);
+      line-height: 1.05;
+    }
+
+    .subtitulo {
+      margin-top: 5px;
+      color: var(--texto-suave);
+      font-size: 13px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--borda);
+      border-radius: 20px;
+      box-shadow: var(--sombra);
+    }
+
+    .mensagem-card,
+    .lista-card {
+      padding: 17px;
+    }
+
+    .mensagem-card {
+      margin-bottom: 16px;
+    }
+
+    .titulo-card {
+      font-size: 17px;
+      font-weight: 800;
+      margin-bottom: 14px;
+    }
+
+    .campo {
+      margin-bottom: 13px;
+    }
+
+    .campo label {
+      display: block;
+      margin-bottom: 7px;
+      color: #374151;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .campo input,
+    .campo textarea {
+      width: 100%;
+      border: 1px solid var(--borda);
+      border-radius: 13px;
+      background: #f9fafb;
+      color: var(--texto);
+      outline: none;
+      transition: 0.2s ease;
+    }
+
+    .campo input {
+      min-height: 49px;
+      padding: 0 14px;
+    }
+
+    .campo textarea {
+      min-height: 150px;
+      padding: 13px 14px;
+      resize: vertical;
+      line-height: 1.5;
+    }
+
+    .campo input:focus,
+    .campo textarea:focus {
+      background: white;
+      border-color: var(--primaria);
+      box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.1);
+    }
+
+    .contato-selecionado {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      padding: 12px;
+      margin-bottom: 13px;
+      border: 1px solid #ddd6fe;
+      border-radius: 14px;
+      background: #f5f3ff;
+    }
+
+    .avatar {
+      width: 44px;
+      height: 44px;
+      flex: 0 0 auto;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, #ede9fe, #ddd6fe);
+      color: var(--primaria-escura);
+      font-weight: 900;
+    }
+
+    .dados-selecionado {
+      min-width: 0;
+      flex: 1;
+    }
+
+    .nome-selecionado {
+      font-weight: 900;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .telefone-selecionado {
+      margin-top: 3px;
+      font-size: 13px;
+      color: var(--texto-suave);
+    }
+
+    .acoes-form {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .btn {
+      min-height: 48px;
+      padding: 0 16px;
+      border-radius: 13px;
+      font-weight: 900;
+      transition: 0.2s ease;
+    }
+
+    .btn:active {
+      transform: scale(0.98);
+    }
+
+    .btn-primario {
+      background: var(--primaria);
+      color: white;
+    }
+
+    .btn-primario:hover {
+      background: var(--primaria-escura);
+    }
+
+    .btn-secundario {
+      background: #e5e7eb;
+      color: #374151;
+    }
+
+    .oculto {
+      display: none !important;
+    }
+
+    .cabecalho-lista {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .titulo-lista {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .contador {
+      min-width: 32px;
+      height: 28px;
+      padding: 0 9px;
+      border-radius: 999px;
+      display: grid;
+      place-items: center;
+      background: #ede9fe;
+      color: var(--primaria-escura);
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .busca {
+      position: relative;
+    }
+
+    .busca input {
+      width: 100%;
+      min-height: 46px;
+      padding: 0 14px 0 43px;
+      border: 1px solid var(--borda);
+      border-radius: 13px;
+      background: #f9fafb;
+      outline: none;
+    }
+
+    .busca input:focus {
+      border-color: var(--primaria);
+      box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.1);
+    }
+
+    .busca span {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--texto-suave);
+    }
+
+    .lista-contatos {
+      display: grid;
+      gap: 11px;
+    }
+
+    .contato {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 13px;
+      border: 1px solid var(--borda);
+      border-radius: 16px;
+      background: white;
+      transition: 0.2s ease;
+    }
+
+    .contato:hover {
+      border-color: #c4b5fd;
+      transform: translateY(-1px);
+    }
+
+    .dados {
+      min-width: 0;
+      flex: 1;
+    }
+
+    .nome {
+      font-size: 15px;
+      font-weight: 900;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .telefone {
+      margin-top: 4px;
+      color: var(--texto-suave);
+      font-size: 13px;
+    }
+
+    .previa-mensagem {
+      margin-top: 6px;
+      color: var(--primaria-escura);
+      font-size: 12px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .btn-selecionar {
+      min-width: 82px;
+      height: 39px;
+      padding: 0 12px;
+      border-radius: 11px;
+      background: #ede9fe;
+      color: var(--primaria-escura);
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .vazio,
+    .carregando {
+      padding: 32px 16px;
+      color: var(--texto-suave);
+      text-align: center;
+    }
+
+    .vazio-icone {
+      margin-bottom: 10px;
+      font-size: 40px;
+    }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 22px;
+      transform: translateX(-50%) translateY(120px);
+      width: calc(100% - 28px);
+      max-width: 520px;
+      padding: 14px 16px;
+      border-radius: 14px;
+      color: white;
+      font-weight: 800;
+      text-align: center;
+      opacity: 0;
+      transition: 0.3s ease;
+      z-index: 1000;
+    }
+
+    .toast.mostrar {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .toast.sucesso {
+      background: var(--sucesso);
+    }
+
+    .toast.erro {
+      background: var(--perigo);
+    }
+
+    .rodape {
+      padding-top: 18px;
+      color: var(--texto-suave);
+      text-align: center;
+      font-size: 12px;
+    }
+
+    @media (min-width: 600px) {
+      .app {
+        padding: 28px 20px 50px;
+      }
+
+      .acoes-form {
+        grid-template-columns: 1fr auto;
+      }
+
+      .cabecalho-lista {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .busca {
+        width: 290px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="app">
+    <header class="topo">
+      <div class="icone-marca">✉</div>
+      <div>
+        <h1>Mensageria</h1>
+        <p class="subtitulo">Mensagens vinculadas aos seus contatos</p>
+      </div>
+    </header>
+
+    <section class="card mensagem-card">
+      <h2 class="titulo-card">Mensagem do contato</h2>
+
+      <div id="contatoSelecionado" class="contato-selecionado oculto">
+        <div class="avatar" id="avatarSelecionado">?</div>
+        <div class="dados-selecionado">
+          <div class="nome-selecionado" id="nomeSelecionado"></div>
+          <div class="telefone-selecionado" id="telefoneSelecionado"></div>
+        </div>
+      </div>
+
+      <div id="avisoSelecao" class="vazio" style="padding: 18px 10px 22px;">
+        <div class="vazio-icone">☝</div>
+        <strong>Selecione um contato abaixo</strong>
+        <p style="margin-top:6px;">A mensagem vinculada será exibida aqui.</p>
+      </div>
+
+      <form id="formMensagem" class="oculto">
+        <input type="hidden" id="idContato" />
+
+        <div class="campo">
+          <label for="mensagem">Mensagem</label>
+          <textarea
+            id="mensagem"
+            placeholder="Digite a mensagem desta pessoa..."
+            maxlength="2000"
+          ></textarea>
+        </div>
+
+        <div class="acoes-form">
+          <button class="btn btn-primario" id="btnSalvar" type="submit">
+            Salvar mensagem
+          </button>
+
+          <button class="btn btn-secundario" id="btnLimpar" type="button">
+            Limpar seleção
+          </button>
+        </div>
+      </form>
+    </section>
+
+    <section class="card lista-card">
+      <div class="cabecalho-lista">
+        <div class="titulo-lista">
+          <h2 class="titulo-card" style="margin-bottom:0;">Selecionar contato</h2>
+          <span class="contador" id="contador">0</span>
+        </div>
+
+        <div class="busca">
+          <span>⌕</span>
+          <input id="campoBusca" type="search" placeholder="Filtrar por nome..." />
+        </div>
+      </div>
+
+      <div id="listaContatos" class="lista-contatos">
+        <div class="carregando">Carregando contatos...</div>
+      </div>
+    </section>
+
+    <p class="rodape">Mensageria</p>
+  </main>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const API_URL = "https://script.google.com/macros/s/AKfycbyI0xEx-_GfprPhixOQRSkD_17w9N7gvQpmVCVA24n-phedpXTkESZGbuiNHaiwX8DddA/exec";
+
+    let contatos = [];
+    let contatoAtual = null;
+
+    const listaContatos = document.getElementById("listaContatos");
+    const contador = document.getElementById("contador");
+    const campoBusca = document.getElementById("campoBusca");
+    const contatoSelecionado = document.getElementById("contatoSelecionado");
+    const avisoSelecao = document.getElementById("avisoSelecao");
+    const formMensagem = document.getElementById("formMensagem");
+    const idContato = document.getElementById("idContato");
+    const mensagem = document.getElementById("mensagem");
+    const avatarSelecionado = document.getElementById("avatarSelecionado");
+    const nomeSelecionado = document.getElementById("nomeSelecionado");
+    const telefoneSelecionado = document.getElementById("telefoneSelecionado");
+    const btnSalvar = document.getElementById("btnSalvar");
+    const btnLimpar = document.getElementById("btnLimpar");
+    const toast = document.getElementById("toast");
+
+    document.addEventListener("DOMContentLoaded", carregarContatos);
+    campoBusca.addEventListener("input", filtrarContatos);
+    formMensagem.addEventListener("submit", salvarMensagem);
+    btnLimpar.addEventListener("click", limparSelecao);
+
+    async function requisicao(dados) {
+      const resposta = await fetch(API_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "text/plain;charset=utf-8"
+        },
+        body: JSON.stringify(dados)
+      });
+
+      if (!resposta.ok) {
+        throw new Error("Não foi possível acessar o servidor.");
+      }
+
+      const resultado = await resposta.json();
+
+      if (!resultado.success) {
+        throw new Error(resultado.message || "Ocorreu um erro na operação.");
+      }
+
+      return resultado;
+    }
+
+    async function carregarContatos() {
+      listaContatos.innerHTML = '<div class="carregando">Carregando contatos...</div>';
+
+      try {
+        const resultado = await requisicao({ action: "listar" });
+
+        contatos = Array.isArray(resultado.data) ? resultado.data : [];
+
+        contatos.sort((a, b) =>
+          String(a.nome || "").localeCompare(String(b.nome || ""), "pt-BR")
+        );
+
+        renderizarContatos(contatos);
+      } catch (erro) {
+        listaContatos.innerHTML = `
+          <div class="vazio">
+            <div class="vazio-icone">⚠</div>
+            <strong>Não foi possível carregar</strong>
+            <p style="margin-top:6px;">${escaparHtml(erro.message)}</p>
+          </div>
+        `;
+        contador.textContent = "0";
+      }
+    }
+
+    function filtrarContatos() {
+      const termo = campoBusca.value.trim().toLowerCase();
+
+      const filtrados = contatos.filter(contato => {
+        const nomeContato = String(contato.nome || "").toLowerCase();
+        const telefoneContato = String(contato.telefone || "").toLowerCase();
+
+        return nomeContato.includes(termo) || telefoneContato.includes(termo);
+      });
+
+      renderizarContatos(filtrados);
+
+      if (filtrados.length === 1) {
+        selecionarContato(filtrados[0].id);
+      }
+    }
+
+    function renderizarContatos(lista) {
+      contador.textContent = lista.length;
+
+      if (!lista.length) {
+        listaContatos.innerHTML = `
+          <div class="vazio">
+            <div class="vazio-icone">☏</div>
+            <strong>Nenhum contato encontrado</strong>
+          </div>
+        `;
+        return;
+      }
+
+      listaContatos.innerHTML = lista.map(contato => {
+        const id = escaparAtributo(contato.id);
+        const nomeSeguro = escaparHtml(contato.nome || "");
+        const telefoneSeguro = escaparHtml(contato.telefone || "");
+        const iniciais = obterIniciais(contato.nome || "");
+        const previa = contato.mensagem
+          ? escaparHtml(contato.mensagem)
+          : "Nenhuma mensagem cadastrada";
+
+        return `
+          <article class="contato">
+            <div class="avatar">${escaparHtml(iniciais)}</div>
+
+            <div class="dados">
+              <div class="nome">${nomeSeguro}</div>
+              <div class="telefone">${telefoneSeguro}</div>
+              <div class="previa-mensagem">${previa}</div>
+            </div>
+
+            <button
+              class="btn-selecionar"
+              type="button"
+              onclick="selecionarContato('${id}')"
+            >
+              Abrir
+            </button>
+          </article>
+        `;
+      }).join("");
+    }
+
+    function selecionarContato(id) {
+      const contato = contatos.find(item => String(item.id) === String(id));
+
+      if (!contato) return;
+
+      contatoAtual = contato;
+
+      idContato.value = contato.id;
+      mensagem.value = contato.mensagem || "";
+      avatarSelecionado.textContent = obterIniciais(contato.nome || "");
+      nomeSelecionado.textContent = contato.nome || "";
+      telefoneSelecionado.textContent = contato.telefone || "";
+
+      avisoSelecao.classList.add("oculto");
+      contatoSelecionado.classList.remove("oculto");
+      formMensagem.classList.remove("oculto");
+
+      window.scrollTo({ top: 0, behavior: "smooth" });
+
+      setTimeout(() => mensagem.focus(), 350);
+    }
+
+    async function salvarMensagem(evento) {
+      evento.preventDefault();
+
+      if (!contatoAtual) {
+        mostrarToast("Selecione um contato.", "erro");
+        return;
+      }
+
+      btnSalvar.disabled = true;
+      btnSalvar.textContent = "Salvando...";
+
+      try {
+        await requisicao({
+          action: "salvarMensagem",
+          id: contatoAtual.id,
+          mensagem: mensagem.value.trim()
+        });
+
+        contatoAtual.mensagem = mensagem.value.trim();
+
+        const indice = contatos.findIndex(
+          item => String(item.id) === String(contatoAtual.id)
+        );
+
+        if (indice !== -1) {
+          contatos[indice].mensagem = contatoAtual.mensagem;
+        }
+
+        renderizarContatos(
+          contatos.filter(contato => {
+            const termo = campoBusca.value.trim().toLowerCase();
+
+            if (!termo) return true;
+
+            return String(contato.nome || "").toLowerCase().includes(termo) ||
+              String(contato.telefone || "").toLowerCase().includes(termo);
+          })
+        );
+
+        mostrarToast("Mensagem salva com sucesso.", "sucesso");
+      } catch (erro) {
+        mostrarToast(erro.message, "erro");
+      } finally {
+        btnSalvar.disabled = false;
+        btnSalvar.textContent = "Salvar mensagem";
+      }
+    }
+
+    function limparSelecao() {
+      contatoAtual = null;
+      idContato.value = "";
+      mensagem.value = "";
+
+      contatoSelecionado.classList.add("oculto");
+      formMensagem.classList.add("oculto");
+      avisoSelecao.classList.remove("oculto");
+    }
+
+    function mostrarToast(texto, tipo) {
+      toast.textContent = texto;
+      toast.className = `toast ${tipo} mostrar`;
+
+      clearTimeout(window.toastTimer);
+
+      window.toastTimer = setTimeout(() => {
+        toast.classList.remove("mostrar");
+      }, 3200);
+    }
+
+    function obterIniciais(nomeCompleto) {
+      const partes = String(nomeCompleto)
+        .trim()
+        .split(/\s+/)
+        .filter(Boolean);
+
+      if (!partes.length) return "?";
+      if (partes.length === 1) return partes[0].slice(0, 2).toUpperCase();
+
+      return `${partes[0][0]}${partes[partes.length - 1][0]}`.toUpperCase();
+    }
+
+    function escaparHtml(valor) {
+      return String(valor)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function escaparAtributo(valor) {
+      return escaparHtml(String(valor)).replaceAll("`", "&#096;");
+    }
+  </script>
+</body>
+</html>
