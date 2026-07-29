@@ -1,745 +1,110 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <meta name="theme-color" content="#111827" />
-  <title>Mensageria</title>
-
-  <style>
-    :root {
-      --fundo: #f3f4f6;
-      --card: #ffffff;
-      --primaria: #7c3aed;
-      --primaria-escura: #6d28d9;
-      --texto: #111827;
-      --texto-suave: #6b7280;
-      --borda: #e5e7eb;
-      --perigo: #dc2626;
-      --sucesso: #16a34a;
-      --sombra: 0 14px 35px rgba(17, 24, 39, 0.08);
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: Inter, Arial, Helvetica, sans-serif;
-    }
-
-    body {
-      min-height: 100vh;
-      background:
-        radial-gradient(circle at top right, rgba(124, 58, 237, 0.12), transparent 34%),
-        var(--fundo);
-      color: var(--texto);
-    }
-
-    button,
-    input,
-    textarea {
-      font: inherit;
-    }
-
-    button {
-      border: none;
-      cursor: pointer;
-    }
-
-    .app {
-      width: min(100%, 760px);
-      margin: 0 auto;
-      padding: 18px 14px 40px;
-    }
-
-    .topo {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 18px;
-    }
-
-    .icone-marca {
-      width: 50px;
-      height: 50px;
-      border-radius: 16px;
-      display: grid;
-      place-items: center;
-      background: linear-gradient(135deg, var(--primaria), #a78bfa);
-      color: white;
-      font-size: 24px;
-      box-shadow: 0 12px 25px rgba(124, 58, 237, 0.24);
-    }
-
-    h1 {
-      font-size: clamp(23px, 5vw, 31px);
-      line-height: 1.05;
-    }
-
-    .subtitulo {
-      margin-top: 5px;
-      color: var(--texto-suave);
-      font-size: 13px;
-    }
-
-    .card {
-      background: var(--card);
-      border: 1px solid var(--borda);
-      border-radius: 20px;
-      box-shadow: var(--sombra);
-    }
-
-    .mensagem-card,
-    .lista-card {
-      padding: 17px;
-    }
-
-    .mensagem-card {
-      margin-bottom: 16px;
-    }
-
-    .titulo-card {
-      font-size: 17px;
-      font-weight: 800;
-      margin-bottom: 14px;
-    }
-
-    .campo {
-      margin-bottom: 13px;
-    }
-
-    .campo label {
-      display: block;
-      margin-bottom: 7px;
-      color: #374151;
-      font-size: 13px;
-      font-weight: 800;
-    }
-
-    .campo input,
-    .campo textarea {
-      width: 100%;
-      border: 1px solid var(--borda);
-      border-radius: 13px;
-      background: #f9fafb;
-      color: var(--texto);
-      outline: none;
-      transition: 0.2s ease;
-    }
-
-    .campo input {
-      min-height: 49px;
-      padding: 0 14px;
-    }
-
-    .campo textarea {
-      min-height: 150px;
-      padding: 13px 14px;
-      resize: vertical;
-      line-height: 1.5;
-    }
-
-    .campo input:focus,
-    .campo textarea:focus {
-      background: white;
-      border-color: var(--primaria);
-      box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.1);
-    }
-
-    .contato-selecionado {
-      display: flex;
-      align-items: center;
-      gap: 11px;
-      padding: 12px;
-      margin-bottom: 13px;
-      border: 1px solid #ddd6fe;
-      border-radius: 14px;
-      background: #f5f3ff;
-    }
-
-    .avatar {
-      width: 44px;
-      height: 44px;
-      flex: 0 0 auto;
-      border-radius: 50%;
-      display: grid;
-      place-items: center;
-      background: linear-gradient(135deg, #ede9fe, #ddd6fe);
-      color: var(--primaria-escura);
-      font-weight: 900;
-    }
-
-    .dados-selecionado {
-      min-width: 0;
-      flex: 1;
-    }
-
-    .nome-selecionado {
-      font-weight: 900;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .telefone-selecionado {
-      margin-top: 3px;
-      font-size: 13px;
-      color: var(--texto-suave);
-    }
-
-    .acoes-form {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 10px;
-      margin-top: 14px;
-    }
-
-    .btn {
-      min-height: 48px;
-      padding: 0 16px;
-      border-radius: 13px;
-      font-weight: 900;
-      transition: 0.2s ease;
-    }
-
-    .btn:active {
-      transform: scale(0.98);
-    }
-
-    .btn-primario {
-      background: var(--primaria);
-      color: white;
-    }
-
-    .btn-primario:hover {
-      background: var(--primaria-escura);
-    }
-
-    .btn-secundario {
-      background: #e5e7eb;
-      color: #374151;
-    }
-
-    .oculto {
-      display: none !important;
-    }
-
-    .cabecalho-lista {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      margin-bottom: 14px;
-    }
-
-    .titulo-lista {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-    }
-
-    .contador {
-      min-width: 32px;
-      height: 28px;
-      padding: 0 9px;
-      border-radius: 999px;
-      display: grid;
-      place-items: center;
-      background: #ede9fe;
-      color: var(--primaria-escura);
-      font-size: 12px;
-      font-weight: 900;
-    }
-
-    .busca {
-      position: relative;
-    }
-
-    .busca input {
-      width: 100%;
-      min-height: 46px;
-      padding: 0 14px 0 43px;
-      border: 1px solid var(--borda);
-      border-radius: 13px;
-      background: #f9fafb;
-      outline: none;
-    }
-
-    .busca input:focus {
-      border-color: var(--primaria);
-      box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.1);
-    }
-
-    .busca span {
-      position: absolute;
-      left: 14px;
-      top: 50%;
-      transform: translateY(-50%);
-      color: var(--texto-suave);
-    }
-
-    .lista-contatos {
-      display: grid;
-      gap: 11px;
-    }
-
-    .contato {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 13px;
-      border: 1px solid var(--borda);
-      border-radius: 16px;
-      background: white;
-      transition: 0.2s ease;
-    }
-
-    .contato:hover {
-      border-color: #c4b5fd;
-      transform: translateY(-1px);
-    }
-
-    .dados {
-      min-width: 0;
-      flex: 1;
-    }
-
-    .nome {
-      font-size: 15px;
-      font-weight: 900;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .telefone {
-      margin-top: 4px;
-      color: var(--texto-suave);
-      font-size: 13px;
-    }
-
-    .previa-mensagem {
-      margin-top: 6px;
-      color: var(--primaria-escura);
-      font-size: 12px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .btn-selecionar {
-      min-width: 82px;
-      height: 39px;
-      padding: 0 12px;
-      border-radius: 11px;
-      background: #ede9fe;
-      color: var(--primaria-escura);
-      font-size: 12px;
-      font-weight: 900;
-    }
-
-    .vazio,
-    .carregando {
-      padding: 32px 16px;
-      color: var(--texto-suave);
-      text-align: center;
-    }
-
-    .vazio-icone {
-      margin-bottom: 10px;
-      font-size: 40px;
-    }
-
-    .toast {
-      position: fixed;
-      left: 50%;
-      bottom: 22px;
-      transform: translateX(-50%) translateY(120px);
-      width: calc(100% - 28px);
-      max-width: 520px;
-      padding: 14px 16px;
-      border-radius: 14px;
-      color: white;
-      font-weight: 800;
-      text-align: center;
-      opacity: 0;
-      transition: 0.3s ease;
-      z-index: 1000;
-    }
-
-    .toast.mostrar {
-      opacity: 1;
-      transform: translateX(-50%) translateY(0);
-    }
-
-    .toast.sucesso {
-      background: var(--sucesso);
-    }
-
-    .toast.erro {
-      background: var(--perigo);
-    }
-
-    .rodape {
-      padding-top: 18px;
-      color: var(--texto-suave);
-      text-align: center;
-      font-size: 12px;
-    }
-
-    @media (min-width: 600px) {
-      .app {
-        padding: 28px 20px 50px;
-      }
-
-      .acoes-form {
-        grid-template-columns: 1fr auto;
-      }
-
-      .cabecalho-lista {
-        flex-direction: row;
-        align-items: center;
-        justify-content: space-between;
-      }
-
-      .busca {
-        width: 290px;
-      }
-    }
-  </style>
-</head>
-
+<html lang="pt-BR"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Mensageria</title><script src="https://accounts.google.com/gsi/client" async defer></script><style>
+:root{--bg:#f1f5f9;--card:#fff;--p:#2563eb;--pd:#1d4ed8;--txt:#0f172a;--mut:#64748b;--bd:#e2e8f0;--danger:#dc2626;--ok:#16a34a}
+*{box-sizing:border-box;margin:0;padding:0;font-family:Arial,Helvetica,sans-serif}
+body{min-height:100vh;background:radial-gradient(circle at top right,rgba(37,99,235,.12),transparent 32%),var(--bg);color:var(--txt)}
+button,input,textarea{font:inherit}button{border:0;cursor:pointer}
+.hidden{display:none!important}.app{width:min(100%,780px);margin:auto;padding:18px 14px 40px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:20px;box-shadow:0 12px 32px rgba(15,23,42,.08);padding:18px;margin-bottom:16px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:18px}.brand{display:flex;align-items:center;gap:12px}
+.logo{width:48px;height:48px;border-radius:15px;display:grid;place-items:center;background:linear-gradient(135deg,var(--p),#60a5fa);color:#fff;font-size:23px}
+h1{font-size:clamp(23px,5vw,30px)}.sub{color:var(--mut);font-size:13px;margin-top:4px}
+.nav{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}.btn{min-height:46px;border-radius:13px;padding:0 16px;font-weight:800}
+.primary{background:var(--p);color:#fff}.secondary{background:#e2e8f0;color:#334155}.danger{background:#fee2e2;color:var(--danger)}
+.user{display:flex;align-items:center;gap:10px}.user img{width:38px;height:38px;border-radius:50%}.user small{display:block;color:var(--mut)}
+.login{min-height:70vh;display:grid;place-items:center;text-align:center}.loginbox{width:min(100%,420px)}.loginbox p{color:var(--mut);margin:10px 0 22px;line-height:1.5}
+.grid{display:grid;gap:13px}.field label{display:block;margin-bottom:7px;font-size:13px;font-weight:700}.field input,.field textarea{width:100%;border:1px solid var(--bd);border-radius:13px;background:#f8fafc;padding:13px 14px;outline:none}.field input{min-height:49px}.field textarea{min-height:150px;resize:vertical}
+.field input:focus,.field textarea:focus{border-color:var(--p);box-shadow:0 0 0 4px rgba(37,99,235,.1);background:#fff}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:15px}.search{width:100%;min-height:46px;border:1px solid var(--bd);border-radius:13px;padding:0 14px;margin:10px 0 14px}
+.list{display:grid;gap:10px}.item{display:flex;align-items:center;gap:12px;border:1px solid var(--bd);border-radius:16px;padding:13px}.avatar{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:#dbeafe;color:var(--pd);font-weight:900;flex:0 0 auto}.data{min-width:0;flex:1}.name{font-weight:800}.phone,.preview{color:var(--mut);font-size:13px;margin-top:4px}.preview{color:var(--pd);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.itemActions{display:flex;gap:7px}.icon{width:39px;height:39px;border-radius:11px;background:#dbeafe;color:var(--pd)}.empty{text-align:center;color:var(--mut);padding:30px 12px}
+.toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%) translateY(100px);opacity:0;color:#fff;padding:14px 18px;border-radius:13px;transition:.25s;z-index:10}.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}.toast.ok{background:var(--ok)}.toast.err{background:var(--danger)}
+@media(min-width:600px){.app{padding:28px 20px}.grid.two{grid-template-columns:1fr .75fr}}
+</style></head>
 <body>
-  <main class="app">
-    <header class="topo">
-      <div class="icone-marca">✉</div>
-      <div>
-        <h1>Mensageria</h1>
-        <p class="subtitulo">Mensagens vinculadas aos seus contatos</p>
-      </div>
-    </header>
-
-    <div style="margin:18px 0;">
-    <button class="btn btn-secundario"
-            type="button"
-            onclick="window.location.href='index.html'">
-        📇 Contatos
-    </button>
-</div>
-
-    <section class="card mensagem-card">
-      <h2 class="titulo-card">Mensagem do contato</h2>
-
-      <div id="contatoSelecionado" class="contato-selecionado oculto">
-        <div class="avatar" id="avatarSelecionado">?</div>
-        <div class="dados-selecionado">
-          <div class="nome-selecionado" id="nomeSelecionado"></div>
-          <div class="telefone-selecionado" id="telefoneSelecionado"></div>
-        </div>
-      </div>
-
-      <div id="avisoSelecao" class="vazio" style="padding: 18px 10px 22px;">
-        <div class="vazio-icone">☝</div>
-        <strong>Selecione um contato abaixo</strong>
-        <p style="margin-top:6px;">A mensagem vinculada será exibida aqui.</p>
-      </div>
-
-      <form id="formMensagem" class="oculto">
-        <input type="hidden" id="idContato" />
-
-        <div class="campo">
-          <label for="mensagem">Mensagem</label>
-          <textarea
-            id="mensagem"
-            placeholder="Digite a mensagem desta pessoa..."
-            maxlength="2000"
-          ></textarea>
-        </div>
-
-        <div class="acoes-form">
-          <button class="btn btn-primario" id="btnSalvar" type="submit">
-            Salvar mensagem
-          </button>
-
-          <button class="btn btn-secundario" id="btnLimpar" type="button">
-            Limpar seleção
-          </button>
-        </div>
-      </form>
-    </section>
-
-    <section class="card lista-card">
-      <div class="cabecalho-lista">
-        <div class="titulo-lista">
-          <h2 class="titulo-card" style="margin-bottom:0;">Selecionar contato</h2>
-          <span class="contador" id="contador">0</span>
-        </div>
-
-        <div class="busca">
-          <span>⌕</span>
-          <input id="campoBusca" type="search" placeholder="Filtrar por nome..." />
-        </div>
-      </div>
-
-      <div id="listaContatos" class="lista-contatos">
-        <div class="carregando">Carregando contatos...</div>
-      </div>
-    </section>
-
-    <p class="rodape">Mensageria</p>
-  </main>
-
-  <div class="toast" id="toast"></div>
-
-  <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbyI0xEx-_GfprPhixOQRSkD_17w9N7gvQpmVCVA24n-phedpXTkESZGbuiNHaiwX8DddA/exec";
-
-    let contatos = [];
-    let contatoAtual = null;
-
-    const listaContatos = document.getElementById("listaContatos");
-    const contador = document.getElementById("contador");
-    const campoBusca = document.getElementById("campoBusca");
-    const contatoSelecionado = document.getElementById("contatoSelecionado");
-    const avisoSelecao = document.getElementById("avisoSelecao");
-    const formMensagem = document.getElementById("formMensagem");
-    const idContato = document.getElementById("idContato");
-    const mensagem = document.getElementById("mensagem");
-    const avatarSelecionado = document.getElementById("avatarSelecionado");
-    const nomeSelecionado = document.getElementById("nomeSelecionado");
-    const telefoneSelecionado = document.getElementById("telefoneSelecionado");
-    const btnSalvar = document.getElementById("btnSalvar");
-    const btnLimpar = document.getElementById("btnLimpar");
-    const toast = document.getElementById("toast");
-
-    document.addEventListener("DOMContentLoaded", carregarContatos);
-    campoBusca.addEventListener("input", filtrarContatos);
-    formMensagem.addEventListener("submit", salvarMensagem);
-    btnLimpar.addEventListener("click", limparSelecao);
-
-    async function requisicao(dados) {
-      const resposta = await fetch(API_URL, {
-        method: "POST",
-        headers: {
-          "Content-Type": "text/plain;charset=utf-8"
-        },
-        body: JSON.stringify(dados)
-      });
-
-      if (!resposta.ok) {
-        throw new Error("Não foi possível acessar o servidor.");
-      }
-
-      const resultado = await resposta.json();
-
-      if (!resultado.success) {
-        throw new Error(resultado.message || "Ocorreu um erro na operação.");
-      }
-
-      return resultado;
-    }
-
-    async function carregarContatos() {
-      listaContatos.innerHTML = '<div class="carregando">Carregando contatos...</div>';
-
-      try {
-        const resultado = await requisicao({ action: "listar" });
-
-        contatos = Array.isArray(resultado.data) ? resultado.data : [];
-
-        contatos.sort((a, b) =>
-          String(a.nome || "").localeCompare(String(b.nome || ""), "pt-BR")
-        );
-
-        renderizarContatos(contatos);
-      } catch (erro) {
-        listaContatos.innerHTML = `
-          <div class="vazio">
-            <div class="vazio-icone">⚠</div>
-            <strong>Não foi possível carregar</strong>
-            <p style="margin-top:6px;">${escaparHtml(erro.message)}</p>
-          </div>
-        `;
-        contador.textContent = "0";
-      }
-    }
-
-    function filtrarContatos() {
-      const termo = campoBusca.value.trim().toLowerCase();
-
-      const filtrados = contatos.filter(contato => {
-        const nomeContato = String(contato.nome || "").toLowerCase();
-        const telefoneContato = String(contato.telefone || "").toLowerCase();
-
-        return nomeContato.includes(termo) || telefoneContato.includes(termo);
-      });
-
-      renderizarContatos(filtrados);
-
-      if (filtrados.length === 1) {
-        selecionarContato(filtrados[0].id);
-      }
-    }
-
-    function renderizarContatos(lista) {
-      contador.textContent = lista.length;
-
-      if (!lista.length) {
-        listaContatos.innerHTML = `
-          <div class="vazio">
-            <div class="vazio-icone">☏</div>
-            <strong>Nenhum contato encontrado</strong>
-          </div>
-        `;
-        return;
-      }
-
-      listaContatos.innerHTML = lista.map(contato => {
-        const id = escaparAtributo(contato.id);
-        const nomeSeguro = escaparHtml(contato.nome || "");
-        const telefoneSeguro = escaparHtml(contato.telefone || "");
-        const iniciais = obterIniciais(contato.nome || "");
-        const previa = contato.mensagem
-          ? escaparHtml(contato.mensagem)
-          : "Nenhuma mensagem cadastrada";
-
-        return `
-          <article class="contato">
-            <div class="avatar">${escaparHtml(iniciais)}</div>
-
-            <div class="dados">
-              <div class="nome">${nomeSeguro}</div>
-              <div class="telefone">${telefoneSeguro}</div>
-              <div class="previa-mensagem">${previa}</div>
-            </div>
-
-            <button
-              class="btn-selecionar"
-              type="button"
-              onclick="selecionarContato('${id}')"
-            >
-              Abrir
-            </button>
-          </article>
-        `;
-      }).join("");
-    }
-
-    function selecionarContato(id) {
-      const contato = contatos.find(item => String(item.id) === String(id));
-
-      if (!contato) return;
-
-      contatoAtual = contato;
-
-      idContato.value = contato.id;
-      mensagem.value = contato.mensagem || "";
-      avatarSelecionado.textContent = obterIniciais(contato.nome || "");
-      nomeSelecionado.textContent = contato.nome || "";
-      telefoneSelecionado.textContent = contato.telefone || "";
-
-      avisoSelecao.classList.add("oculto");
-      contatoSelecionado.classList.remove("oculto");
-      formMensagem.classList.remove("oculto");
-
-      window.scrollTo({ top: 0, behavior: "smooth" });
-
-      setTimeout(() => mensagem.focus(), 350);
-    }
-
-    async function salvarMensagem(evento) {
-      evento.preventDefault();
-
-      if (!contatoAtual) {
-        mostrarToast("Selecione um contato.", "erro");
-        return;
-      }
-
-      btnSalvar.disabled = true;
-      btnSalvar.textContent = "Salvando...";
-
-      try {
-        await requisicao({
-          action: "salvarMensagem",
-          id: contatoAtual.id,
-          mensagem: mensagem.value.trim()
-        });
-
-        contatoAtual.mensagem = mensagem.value.trim();
-
-        const indice = contatos.findIndex(
-          item => String(item.id) === String(contatoAtual.id)
-        );
-
-        if (indice !== -1) {
-          contatos[indice].mensagem = contatoAtual.mensagem;
-        }
-
-        renderizarContatos(
-          contatos.filter(contato => {
-            const termo = campoBusca.value.trim().toLowerCase();
-
-            if (!termo) return true;
-
-            return String(contato.nome || "").toLowerCase().includes(termo) ||
-              String(contato.telefone || "").toLowerCase().includes(termo);
-          })
-        );
-
-        mostrarToast("Mensagem salva com sucesso.", "sucesso");
-      } catch (erro) {
-        mostrarToast(erro.message, "erro");
-      } finally {
-        btnSalvar.disabled = false;
-        btnSalvar.textContent = "Salvar mensagem";
-      }
-    }
-
-    function limparSelecao() {
-      contatoAtual = null;
-      idContato.value = "";
-      mensagem.value = "";
-
-      contatoSelecionado.classList.add("oculto");
-      formMensagem.classList.add("oculto");
-      avisoSelecao.classList.remove("oculto");
-    }
-
-    function mostrarToast(texto, tipo) {
-      toast.textContent = texto;
-      toast.className = `toast ${tipo} mostrar`;
-
-      clearTimeout(window.toastTimer);
-
-      window.toastTimer = setTimeout(() => {
-        toast.classList.remove("mostrar");
-      }, 3200);
-    }
-
-    function obterIniciais(nomeCompleto) {
-      const partes = String(nomeCompleto)
-        .trim()
-        .split(/\s+/)
-        .filter(Boolean);
-
-      if (!partes.length) return "?";
-      if (partes.length === 1) return partes[0].slice(0, 2).toUpperCase();
-
-      return `${partes[0][0]}${partes[partes.length - 1][0]}`.toUpperCase();
-    }
-
-    function escaparHtml(valor) {
-      return String(valor)
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
-    }
-
-    function escaparAtributo(valor) {
-      return escaparHtml(String(valor)).replaceAll("`", "&#096;");
-    }
-  </script>
-</body>
-</html>
+<section id="loginScreen" class="login"><div class="card loginbox"><div class="logo" style="margin:auto">✉</div><h1 style="margin-top:14px">Mensageria</h1><p>Entre com sua conta Google para acessar somente suas mensagens.</p><div id="g_id_onload" data-client_id="COLE_AQUI_SEU_CLIENT_ID.apps.googleusercontent.com" data-callback="handleCredentialResponse" data-auto_prompt="false"></div><div class="g_id_signin" data-type="standard" data-size="large" data-theme="outline" data-text="signin_with"></div></div></section>
+<main id="appScreen" class="app hidden">
+<header class="top"><div class="brand"><div class="logo">✉</div><div><h1>Mensageria</h1><p class="sub">Mensagens individuais por contato</p></div></div><div class="user"><img id="userPhoto" alt=""><div><strong id="userName"></strong><small id="userEmail"></small></div></div></header>
+<nav class="nav"><button class="btn secondary" onclick="location.href='index.html'">📇 Contatos</button><button class="btn primary" onclick="location.href='mensageria.html'">✉ Mensageria</button><button class="btn danger" onclick="logout()">Sair</button></nav>
+<section class="card"><h2>Localizar pessoa</h2><input id="search" class="search" placeholder="Digite o nome ou telefone"><div id="list" class="list"><div class="empty">Carregando...</div></div></section>
+<section id="messageCard" class="card hidden"><h2 id="selectedName">Mensagem</h2><p id="selectedPhone" class="sub"></p><div class="field" style="margin-top:14px"><label>Mensagem</label><textarea id="message" maxlength="2000"></textarea></div><div class="actions"><button class="btn primary" onclick="saveMessage()">Salvar mensagem</button><button class="btn secondary" onclick="closeMessage()">Fechar</button></div></section>
+</main><div id="toast" class="toast"></div>
+<script>
+const API_URL = "https://script.google.com/macros/s/AKfycbyI0xEx-_GfprPhixOQRSkD_17w9N7gvQpmVCVA24n-phedpXTkESZGbuiNHaiwX8DddA/exec";
+const GOOGLE_CLIENT_ID = "COLE_AQUI_SEU_CLIENT_ID.apps.googleusercontent.com";
+let googleCredential = "";
+let currentUser = null;
+
+function handleCredentialResponse(response){
+  googleCredential = response.credential;
+  sessionStorage.setItem("googleCredential", googleCredential);
+  validateSession();
+}
+
+async function validateSession(){
+  googleCredential = sessionStorage.getItem("googleCredential") || googleCredential;
+  if(!googleCredential) return showLogin();
+
+  try{
+    const r = await api({action:"session"}, false);
+    currentUser = r.user;
+    document.getElementById("loginScreen").classList.add("hidden");
+    document.getElementById("appScreen").classList.remove("hidden");
+    document.getElementById("userName").textContent = currentUser.name || currentUser.email;
+    document.getElementById("userEmail").textContent = currentUser.email;
+    if(currentUser.picture) document.getElementById("userPhoto").src = currentUser.picture;
+    afterLogin();
+  }catch(e){
+    logout(false);
+  }
+}
+
+function showLogin(){
+  document.getElementById("loginScreen").classList.remove("hidden");
+  document.getElementById("appScreen").classList.add("hidden");
+}
+
+function logout(reload=true){
+  googleCredential="";
+  currentUser=null;
+  sessionStorage.removeItem("googleCredential");
+  if(window.google?.accounts?.id) google.accounts.id.disableAutoSelect();
+  if(reload) location.reload(); else showLogin();
+}
+
+async function api(payload, includeToken=true){
+  const body = {...payload};
+  if(includeToken || payload.action==="session") body.credential = googleCredential;
+  const res = await fetch(API_URL, {
+    method:"POST",
+    headers:{"Content-Type":"text/plain;charset=utf-8"},
+    body:JSON.stringify(body)
+  });
+  const data = await res.json();
+  if(!data.success) throw new Error(data.message || "Erro na operação.");
+  return data;
+}
+
+function toastMsg(msg,type="ok"){
+  const t=document.getElementById("toast");
+  t.textContent=msg;t.className=`toast ${type} show`;
+  clearTimeout(window._tt);window._tt=setTimeout(()=>t.classList.remove("show"),3000);
+}
+
+function initials(name){
+  const p=String(name||"").trim().split(/\s+/).filter(Boolean);
+  return p.length>1?(p[0][0]+p[p.length-1][0]).toUpperCase():(p[0]||"?").slice(0,2).toUpperCase();
+}
+
+let contacts=[],selected=null;
+function afterLogin(){loadContacts();}
+async function loadContacts(){try{const r=await api({action:"listar"});contacts=r.data||[];render(contacts);}catch(e){toastMsg(e.message,"err");}}
+document.getElementById("search").addEventListener("input",e=>{const q=e.target.value.toLowerCase();const f=contacts.filter(c=>String(c.nome).toLowerCase().includes(q)||String(c.telefone).toLowerCase().includes(q));render(f);if(f.length===1)openMessage(f[0].id);});
+function render(list){document.getElementById("list").innerHTML=list.length?list.map(c=>`<article class="item"><div class="avatar">${initials(c.nome)}</div><div class="data"><div class="name">${escapeHtml(c.nome)}</div><div class="phone">${escapeHtml(c.telefone)}</div><div class="preview">${escapeHtml(c.mensagem||"Nenhuma mensagem")}</div></div><button class="btn secondary" onclick="openMessage('${c.id}')">Abrir</button></article>`).join(""):'<div class="empty">Nenhum contato encontrado.</div>';}
+function openMessage(id){selected=contacts.find(c=>String(c.id)===String(id));if(!selected)return;selectedName.textContent=selected.nome;selectedPhone.textContent=selected.telefone;message.value=selected.mensagem||"";messageCard.classList.remove("hidden");messageCard.scrollIntoView({behavior:"smooth"});}
+function closeMessage(){selected=null;messageCard.classList.add("hidden");}
+async function saveMessage(){if(!selected)return;try{await api({action:"salvarMensagem",id:selected.id,mensagem:message.value.trim()});selected.mensagem=message.value.trim();toastMsg("Mensagem salva.");render(contacts);}catch(e){toastMsg(e.message,"err");}}
+function escapeHtml(v){return String(v||"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));}
+window.onload=validateSession;
+</script></body></html>
